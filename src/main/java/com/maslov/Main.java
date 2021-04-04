@@ -10,8 +10,8 @@ public class Main {
         Server server = new Server();
 
         server.addHandler("GET", "/index.html", Main::sendResponse);
-        server.addHandler("GET", "/spring.svg", Main::sendResponse);
-        server.addHandler("GET", "/spring.png", Main::sendResponse);
+        server.addHandler("GET", "/spring.html", Main::sendResponse);
+//        server.addHandler("GET", "/spring.png", Main::sendResponse);
 //        server.addHandler("POST", "/messages", (request, responseStream) -> {
 //            sendResponse(request, responseStream);
 //        });
