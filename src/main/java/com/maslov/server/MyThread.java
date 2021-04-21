@@ -1,4 +1,4 @@
-package com.maslov;
+package com.maslov.server;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
