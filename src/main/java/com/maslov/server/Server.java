@@ -1,4 +1,4 @@
-package com.maslov;
+package com.maslov.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-    private final List<String> validPath = List.of("/index.html", "/spring.svg", "/spring.png");
+    private final List<String> validPath = List.of("/index.html", "/classic.html", "/spring.png");
     private final ExecutorService threadPool = Executors.newFixedThreadPool(64);
     private final Map<String, Map<String, Handler>> handlers;
     private final Map<String, Handler> handlerMap = new HashMap<>();
@@ -31,7 +31,7 @@ public class Server {
         }
     }
 
-    void addHandler(String method, String path, Handler handler) {
+    public void addHandler(String method, String path, Handler handler) {
         handlerMap.put(path, handler);
         handlers.put(method, handlerMap);
     }

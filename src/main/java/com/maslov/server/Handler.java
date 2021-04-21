@@ -1,4 +1,6 @@
-package com.maslov;
+package com.maslov.server;
+
+import com.maslov.server.Request;
 
 import java.io.BufferedOutputStream;
 

@@ -1,4 +1,4 @@
-package com.maslov;
+package com.maslov.server;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +48,7 @@ public class Request {
         }
         if (method.equals("Get")) {
             nameValuePairs = getQueryParam(parts[1]);
-        }else {
+        } else {
             char[] buffer = parseBodyPost(headers);
             nameValuePairs = getPostParams(String.valueOf(buffer));
         }
