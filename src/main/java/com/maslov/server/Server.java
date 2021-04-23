@@ -1,17 +1,9 @@
 package com.maslov.server;
 
-import org.apache.http.Header;
-
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -19,10 +11,22 @@ import java.util.concurrent.Executors;
 
 public class Server {
 
-    final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html",
-            "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
     private final ExecutorService executorService;
     private final Map<String, Map<String, Handler>> handlers = new ConcurrentHashMap<>();
+    private final Handler notFoundHandler = ((request, out) -> {
+        try {
+            out.write((
+                    "HTTP/1.1 404 Not Found\r\n" +
+                            "Content-Length: 0\r\n" +
+                            "Connection: close\r\n" +
+                            "\r\n"
+            ).getBytes());
+            out.flush();
+            return;
+        } catch (Exception ex) {
+            //fixme
+        }
+    });
 
     public Server(int poolSize) {
         this.executorService = Executors.newFixedThreadPool(poolSize);
@@ -39,7 +43,7 @@ public class Server {
         try (final var serverSocket = new ServerSocket(port)) {
             while (true) {
                 final var socket = serverSocket.accept();
-                executorService.submit(() -> processConnection(socket));
+                executorService.submit(() -> Server.this.processConnection(socket));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,17 +56,17 @@ public class Server {
                 final var in = socket.getInputStream();
                 final var out = new BufferedOutputStream(socket.getOutputStream());
         ) {
-            final Request request = Request.fromInputStream(in);
+            Request request = Request.fromInputStream(in);
 
             Map<String, Handler> handlerMap = handlers.get(request.getMethod());
             if (handlerMap == null) {
-                //todo 404
+                notFoundHandler.handle(request, out);
                 return;
             }
 
-            Handler handler = handlerMap.get(request.getMethod());
+            Handler handler = handlerMap.get(request.getPath());
             if (handler == null) {
-                // todo 404
+                notFoundHandler.handle(request, out);
                 return;
             }
 
